@@ -3,6 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Turunan Numerik</title>
+    <!-- STYLING: Layout grid 2 kolom, responsive, tema biru -->
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
@@ -27,6 +28,7 @@
     <div class="container">
         <div class="header"><h1>Kalkulator Turunan Numerik</h1></div>
         <div class="content">
+             <!-- BAGIAN TABEL: Generate tabel nilai f(x) untuk perhitungan numerik -->
             <div class="section">
                 <h2>📊 Tabel Nilai Fungsi f(x)</h2>
                 <div class="form-group">
@@ -54,6 +56,7 @@
                     </table>
                 </div>
             </div>
+            <!-- BAGIAN PERHITUNGAN: 4 metode numerik untuk turunan ke-1 dan ke-2 -->
             <div class="section">
                 <h2>🧮 Perhitungan Turunan</h2>
                 <div class="form-group">
@@ -84,8 +87,11 @@
     </div>
 
     <script>
+        // VARIABEL GLOBAL: Menyimpan data tabel dan parameter
         let functionData = [], currentFunction = "", currentH = 0;
 
+        // EVALUASI FUNGSI: Konversi string input ke fungsi JavaScript
+        // Mendukung: x^2, sin(x), cos(x), exp(x), log(x), sqrt(x), pi, e
         function evaluateFunction(funcStr, x) {
             try {
                 const processedFunc = funcStr.toLowerCase().replace(/\^/g, "**").replace(/sin/g, "Math.sin").replace(/cos/g, "Math.cos").replace(/tan/g, "Math.tan").replace(/exp/g, "Math.exp").replace(/log/g, "Math.log").replace(/sqrt/g, "Math.sqrt").replace(/abs/g, "Math.abs").replace(/pi/g, "Math.PI").replace(/e(?![a-zA-Z])/g, "Math.E");
@@ -96,6 +102,7 @@
             } catch (error) { throw new Error("Fungsi tidak valid"); }
         }
 
+        // ERROR HANDLING: Tampilkan pesan error
         function showError(elementId, message) {
             const errorElement = document.getElementById(elementId);
             errorElement.textContent = message;
@@ -103,6 +110,8 @@
             setTimeout(() => errorElement.style.display = "none", 5000);
         }
 
+        // GENERATE TABEL: Buat tabel nilai f(x) dari x₀ dengan interval h
+        // Validasi: fungsi tidak kosong, nilai numerik valid, baris 3-20
         function generateTable() {
             const funcInput = document.getElementById("functionInput").value.trim();
             const x0 = parseFloat(document.getElementById("x0Input").value);
@@ -133,6 +142,7 @@
             }
         }
 
+        // CARI NILAI: Ambil f(x) dari tabel berdasarkan x target
         function findFunctionValue(targetX) {
             const tolerance = 1e-10;
             for (let data of functionData) {
@@ -141,6 +151,7 @@
             return null;
         }
 
+        // DATABASE TURUNAN: Untuk analisis error bound teoritis
         function getSymbolicDerivative(funcStr, order) {
             const derivatives = {
                 1: { "x^2": "2*x", "x**2": "2*x", "sin(x)": "cos(x)", "cos(x)": "-sin(x)", "exp(x)": "exp(x)", "x^3": "3*x^2", "x**3": "3*x**2", "x^4": "4*x^3", "x**4": "4*x**3" },
@@ -153,12 +164,14 @@
             return derivatives[order] && derivatives[order][normalizedFunc] ? derivatives[order][normalizedFunc] : null;
         }
 
+        // TURUNAN PERTAMA: 4 metode numerik dengan analisis error
         function calculateFirstDerivative(x, method) {
             const hVal = currentH;
             let result, steps, errorAnalysis;
 
             switch (method) {
                 case "forward-h":
+                    // Selisih Maju O(h): f'(x) = (f₁ - f₀) / h
                     const f0 = findFunctionValue(x), f1 = findFunctionValue(x + hVal);
                     if (f0 === null || f1 === null) throw new Error("Nilai x tidak ditemukan dalam tabel.");
                     result = (f1 - f0) / hVal;
@@ -177,6 +190,7 @@
                     }
                     break;
                 case "forward-h2":
+                    // Selisih Maju O(h²): f'(x) = (-3f₀ + 4f₁ - f₂) / (2h)
                     const f0_fh2 = findFunctionValue(x), f1_fh2 = findFunctionValue(x + hVal), f2_fh2 = findFunctionValue(x + 2 * hVal);
                     if (f0_fh2 === null || f1_fh2 === null || f2_fh2 === null) throw new Error("Nilai x tidak ditemukan dalam tabel.");
                     result = (-3 * f0_fh2 + 4 * f1_fh2 - f2_fh2) / (2 * hVal);
@@ -195,6 +209,7 @@
                     }
                     break;
                 case "central-h2":
+                    // Selisih Pusat O(h²): f'(x) = (f₁ - f₋₁) / (2h)
                     const f1_ch2 = findFunctionValue(x + hVal), f_1_ch2 = findFunctionValue(x - hVal);
                     if (f1_ch2 === null || f_1_ch2 === null) throw new Error("Nilai x tidak ditemukan dalam tabel.");
                     result = (f1_ch2 - f_1_ch2) / (2 * hVal);
@@ -213,6 +228,7 @@
                     }
                     break;
                 case "central-h4":
+                    // Selisih Pusat O(h⁴): f'(x) = (-f₂ + 8f₁ - 8f₋₁ + f₋₂) / (12h)
                     const f2_ch4 = findFunctionValue(x + 2 * hVal), f1_ch4 = findFunctionValue(x + hVal), f_1_ch4 = findFunctionValue(x - hVal), f_2_ch4 = findFunctionValue(x - 2 * hVal);
                     if (f2_ch4 === null || f1_ch4 === null || f_1_ch4 === null || f_2_ch4 === null) throw new Error("Nilai x tidak ditemukan dalam tabel.");
                     result = (-f2_ch4 + 8 * f1_ch4 - 8 * f_1_ch4 + f_2_ch4) / (12 * hVal);
@@ -234,12 +250,14 @@
             return { result, steps, errorAnalysis };
         }
 
+        // TURUNAN KEDUA: 4 metode numerik dengan analisis error
         function calculateSecondDerivative(x, method) {
             const hVal = currentH;
             let result, steps, errorAnalysis;
 
             switch (method) {
                 case "forward-h":
+                    // Selisih Maju O(h): f''(x) = (f₂ - 2f₁ + f₀) / h²
                     const f0 = findFunctionValue(x), f1 = findFunctionValue(x + hVal), f2 = findFunctionValue(x + 2 * hVal);
                     if (f0 === null || f1 === null || f2 === null) throw new Error("Nilai x tidak ditemukan dalam tabel.");
                     result = (f2 - 2 * f1 + f0) / (hVal * hVal);
@@ -258,6 +276,7 @@
                     }
                     break;
                 case "forward-h2":
+                    // Selisih Maju O(h²): f''(x) = (2f₀ - 5f₁ + 4f₂ - f₃) / h²
                     const f0_fh2 = findFunctionValue(x), f1_fh2 = findFunctionValue(x + hVal), f2_fh2 = findFunctionValue(x + 2 * hVal), f3_fh2 = findFunctionValue(x + 3 * hVal);
                     if (f0_fh2 === null || f1_fh2 === null || f2_fh2 === null || f3_fh2 === null) throw new Error("Nilai x tidak ditemukan dalam tabel.");
                     result = (2 * f0_fh2 - 5 * f1_fh2 + 4 * f2_fh2 - f3_fh2) / (hVal * hVal);
@@ -276,6 +295,7 @@
                     }
                     break;
                 case "central-h2":
+                    // Selisih Pusat O(h²): f''(x) = (f₁ - 2f₀ + f₋₁) / h²
                     const f0_c2h2 = findFunctionValue(x), f1_c2h2 = findFunctionValue(x + hVal), f_1_c2h2 = findFunctionValue(x - hVal);
                     if (f0_c2h2 === null || f1_c2h2 === null || f_1_c2h2 === null) throw new Error("Nilai x tidak ditemukan dalam tabel.");
                     result = (f1_c2h2 - 2 * f0_c2h2 + f_1_c2h2) / (hVal * hVal);
@@ -294,6 +314,7 @@
                     }
                     break;
                 case "central-h4":
+                    // Selisih Pusat O(h⁴): f''(x) = (-f₂ + 16f₁ - 30f₀ + 16f₋₁ - f₋₂) / (12h²)
                     const f0_c4h2 = findFunctionValue(x), f1_c4h2 = findFunctionValue(x + hVal), f2_c4h2 = findFunctionValue(x + 2 * hVal), f_1_c4h2 = findFunctionValue(x - hVal), f_2_c4h2 = findFunctionValue(x - 2 * hVal);
                     if (f0_c4h2 === null || f1_c4h2 === null || f2_c4h2 === null || f_1_c4h2 === null || f_2_c4h2 === null) throw new Error("Nilai x tidak ditemukan dalam tabel.");
                     result = (-f2_c4h2 + 16 * f1_c4h2 - 30 * f0_c4h2 + 16 * f_1_c4h2 - f_2_c4h2) / (12 * hVal * hVal);
@@ -305,7 +326,8 @@
             }
             return { result, steps, errorAnalysis };
         }
-
+        
+        // FUNGSI UTAMA: Koordinator perhitungan turunan
         function calculateDerivative() {
             const xCalc = parseFloat(document.getElementById("xCalc").value);
             const derivativeOrder = parseInt(document.getElementById("derivativeOrder").value);
