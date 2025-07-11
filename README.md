@@ -299,7 +299,7 @@
                     const f0_c2h2 = findFunctionValue(x), f1_c2h2 = findFunctionValue(x + hVal), f_1_c2h2 = findFunctionValue(x - hVal);
                     if (f0_c2h2 === null || f1_c2h2 === null || f_1_c2h2 === null) throw new Error("Nilai x tidak ditemukan dalam tabel.");
                     result = (f1_c2h2 - 2 * f0_c2h2 + f_1_c2h2) / (hVal * hVal);
-                    steps = `<h4>Metode: Selisih Pusat O(h²) - Turunan ke-2</h4><p><strong>Rumus:</strong> f''(x) = (f₁ - 2f₀ + f₋₁) / h²</p><p><strong>Substitusi:</strong> f''(${x}) = [f(${x + hVal}) - 2f(${x}) + f(${x - hVal})] / ${hVal}²</p><p><strong>Perhitungan:</strong> f''(${x}) = (${f1_c2h2.toFixed(3)} - 2(${f0_c2h2.toFixed(3)}) + ${f_1_c2h2.toFixed(3)}) / ${(hVal * hVal).toFixed(3)}</p><p><strong>Hasil:</strong> f''(${x}) = ${result.toFixed(3)}</p>`;
+                    steps = `<h4>Metode: Selisih Pusat O(h²) - Turunan ke-2</h4><p><strong>Rumus:</strong> f''(x) = (f_₁ - 2f₀ + f1) / h²</p><p><strong>Substitusi:</strong> f''(${x}) = [f(${x + hVal}) - 2f(${x}) + f(${x - hVal})] / ${hVal}²</p><p><strong>Perhitungan:</strong> f''(${x}) = (${f1_c2h2.toFixed(3)} - 2(${f0_c2h2.toFixed(3)}) + ${f_1_c2h2.toFixed(3)}) / ${(hVal * hVal).toFixed(3)}</p><p><strong>Hasil:</strong> f''(${x}) = ${result.toFixed(3)}</p>`;
                     const derivative4_c2h2 = getSymbolicDerivative(currentFunction, 4);
                     if (derivative4_c2h2 && derivative4_c2h2 !== "0") {
                         try {
